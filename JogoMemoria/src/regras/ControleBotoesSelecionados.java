@@ -30,11 +30,30 @@ public class ControleBotoesSelecionados {
         this.referenciaBotoes = referenciaBotoes;
     }
 
+    public void excutarAcaoBotoes(JButton botao, EstadosBotoes estado){
+        alterarSelecao(botao, estado);
+
+        if (this.isTodasSelecionadas()){
+            alterarEstadoTodosBotoes(EstadosBotoes.PARES);
+        } else {
+            alterarVisualizacaoBotao(botao);
+        }
+
+    }
+
+    private void alterarEstadoTodosBotoes(EstadosBotoes estado){
+        for (JButton botao : this.referenciaBotoes.keySet()) {
+            alterarSelecao(botao, estado);
+            alterarVisualizacaoBotao(botao);
+        }
+    }
+
     public void adicionarBotao(JButton botao){
         this.referenciaBotoes.put(botao, EstadosBotoes.NORMAL);
     }
 
     public void alterarSelecao(JButton botao, EstadosBotoes selecionado){
+        this.referenciaBotoes.put(botao, selecionado);
         EstadosBotoes b = this.referenciaBotoes.get(botao);
         b = EstadosBotoes.SELECIONADO;
         alterarVisualizacaoBotao(botao);
@@ -44,26 +63,25 @@ public class ControleBotoesSelecionados {
         EstadosBotoes selecionado = this.referenciaBotoes.get(botao);
 
         switch (selecionado){
-            case NORMAL -> {
-                botao.setBackground(Color.gray);
+            case NORMAL -> { // Cinza, não exibe texto
+                botao.setBackground(null);
                 botao.setText("Jogo");
                 break;
-            } case SELECIONADO -> {
+            } case SELECIONADO -> {  // Exibir texto, mudar a cor
                 botao.setBackground(Color.GREEN);
                 botao.setText(this.nmBotao);
                 break;
-            } case PARES -> {
+            } case PARES -> { // Mudar a cor, exibir o texto
                 botao.setBackground(Color.magenta);
                 botao.setText(this.nmBotao);
+                botao.setEnabled(false);
                 break;
             }
         }
     }
 
     public void zerarSelecoes(){
-        for (EstadosBotoes b : this.referenciaBotoes.values()) {
-              b = EstadosBotoes.NORMAL;
-        }
+        alterarEstadoTodosBotoes(EstadosBotoes.NORMAL);
     }
 
     public Boolean isTodasSelecionadas(){
